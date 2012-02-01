@@ -27,7 +27,7 @@ in this Software without prior written authorization from EllisLab, Inc.
 
 $plugin_info = array(
                         'pi_name'        => 'World Weather',
-                        'pi_version'     => '2.0',
+                        'pi_version'     => '2.0.1',
                         'pi_author'      => 'Donnie Adams',
                         'pi_author_url'  => 'http://http://expressionengine.com/downloads/',
                         'pi_description' => 'Displays weather conditions on your site',
@@ -166,7 +166,8 @@ class World_weather
         $tags['visibility_mi']  = ( ! isset($tags['visibility_mi']))  ? $NA : $tags['visibility_mi'];
         $tags['visibility_km']  = ( ! isset($tags['visibility_km']))  ? $NA : $tags['visibility_km'];
         $tags['condition']      = ( ! isset($tags['condition']))      ? $this->EE->lang->line('clear') : $tags['condition'];
-        $tags['last_update']     = ( ! isset($tags['last_update']))   ? $this->get_filemtime() : $tags['last_update'];
+        $tags['last_update']    = ( ! isset($tags['last_update']))   ? $this->get_filemtime() : $tags['last_update'];
+
 
         /*----------------------------------------
          Parse the Template
@@ -212,7 +213,7 @@ class World_weather
         foreach ($this->EE->TMPL->var_single as $key => $val)
         {
             /*
-            if($key == 'metar')
+            if ($key == 'metar')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -222,16 +223,26 @@ class World_weather
             }
             */
 
-            if(ereg('last_update', $key))
+			if (strpos($key, 'gmt_last_update') !== FALSE)
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+				$tagdata = $this->EE->TMPL->swap_var_single(
+                                                    $key,
+                                                    $this->EE->localize->decode_date($val, $tags['last_update'], FALSE),
+                                                    $tagdata
+                                                    );
+            }
+
+
+			if (strpos($key,'last_update') !== FALSE)
+            {
+				$tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
                                                     $this->EE->localize->decode_date($val, $tags['last_update']),
                                                     $tagdata
                                                     );
             }
 
-            if($key == 'wind_direction')
+            if ($key == 'wind_direction')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -240,7 +251,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'wind_degrees')
+            if ($key == 'wind_degrees')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -249,7 +260,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'wind_speed_mph')
+            if ($key == 'wind_speed_mph')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -258,7 +269,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'wind_speed_kmh')
+            if ($key == 'wind_speed_kmh')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -267,7 +278,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'wind_speed_kt')
+            if ($key == 'wind_speed_kt')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -276,7 +287,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'wind_gust_mph')
+            if ($key == 'wind_gust_mph')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -285,7 +296,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'wind_gust_kmh')
+            if ($key == 'wind_gust_kmh')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -294,7 +305,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'wind_gust_kt')
+            if ($key == 'wind_gust_kt')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -303,7 +314,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'temperature_f')
+            if ($key == 'temperature_f')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -312,7 +323,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'temperature_c')
+            if ($key == 'temperature_c')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -321,7 +332,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'feels_like_f')
+            if ($key == 'feels_like_f')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -330,7 +341,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'feels_like_c')
+            if ($key == 'feels_like_c')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -339,7 +350,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'dew_point_f')
+            if ($key == 'dew_point_f')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -348,7 +359,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'dew_point_c')
+            if ($key == 'dew_point_c')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -357,7 +368,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'humidity')
+            if ($key == 'humidity')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -366,7 +377,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'heat_index_f')
+            if ($key == 'heat_index_f')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -375,7 +386,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'heat_index_c')
+            if ($key == 'heat_index_c')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -384,7 +395,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'barometer_in')
+            if ($key == 'barometer_in')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -393,7 +404,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'barometer_hpa')
+            if ($key == 'barometer_hpa')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -402,7 +413,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'condition')
+            if ($key == 'condition')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -411,7 +422,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'visibility_mi')
+            if ($key == 'visibility_mi')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -420,7 +431,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'visibility_km')
+            if ($key == 'visibility_km')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -429,7 +440,7 @@ class World_weather
                                                     );
             }
 
-            if($key == 'sky_condition')
+            if ($key == 'sky_condition')
             {
                 $tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
@@ -618,7 +629,9 @@ class World_weather
         {
             if ($mtime = @filemtime($this->cache_path))
             {
-                $time = mktime(
+				//return $mtime;	
+
+				$time = gmmktime(
                                 gmdate("H", $mtime),
                                 gmdate("i", $mtime),
                                 gmdate("s", $mtime),
@@ -627,6 +640,7 @@ class World_weather
                                 gmdate("Y", $mtime)
                                 );
                 return $time;
+
             }
         }
 
@@ -676,7 +690,7 @@ class World_weather
         // get date: 2004/08/08 23:00
         if (preg_match("/(20\d{2})\/([0-5]\d)\/(\d{2}) (\d{2}):(\d{2})/", $raw_metar, $date))
         {
-            $weather['last_update'] = mktime(
+            $weather['last_update'] = gmmktime(
                                             $date[4], // hour
                                             $date[5], // min
                                             0,        // 
@@ -684,6 +698,8 @@ class World_weather
                                             $date[3], // day
                                             $date[1]  // year
                                             );
+
+
         }
 
         $metar_groups = explode(' ', $raw_metar);
@@ -1356,10 +1372,12 @@ class World_weather
 			The default is 180 minutes (three hours).
 		-------------------
 
-		================
-		Version 2.0
-		******************
-		- Updated plugin to be 2.0 compatible
+		------------------
+		CHANGELOG:
+		------------------
+		Version 2.0.1 - added {gmt_last_update} date variable and altered {last_update} to show localized time
+		Version 2.0 - Updated plugin to be 2.0 compatible
+
 
 
 		<?php
