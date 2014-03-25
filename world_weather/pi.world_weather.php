@@ -227,7 +227,7 @@ class World_weather
             {
 				$tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
-                                                    $this->EE->localize->decode_date($val, $tags['last_update'], FALSE),
+                                                    $this->EE->localize->format_date($val, $tags['last_update'], FALSE),
                                                     $tagdata
                                                     );
             }
@@ -237,7 +237,7 @@ class World_weather
             {
 				$tagdata = $this->EE->TMPL->swap_var_single(
                                                     $key,
-                                                    $this->EE->localize->decode_date($val, $tags['last_update']),
+                                                    $this->EE->localize->format_date($val, $tags['last_update']),
                                                     $tagdata
                                                     );
             }
