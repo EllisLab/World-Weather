@@ -27,7 +27,7 @@ in this Software without prior written authorization from EllisLab, Inc.
 
 $plugin_info = array(
                         'pi_name'        => 'World Weather',
-                        'pi_version'     => '2.0.1',
+                        'pi_version'     => '2.0.2',
                         'pi_author'      => 'Donnie Adams',
                         'pi_author_url'  => 'http://http://expressionengine.com/downloads/',
                         'pi_description' => 'Displays weather conditions on your site',
