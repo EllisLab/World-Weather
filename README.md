@@ -7,11 +7,11 @@ Every station has a four character station location indicator code (ICAO) that i
 NOTE: The weather data that is returned by a station depends on the observation software located at that particular station. Weather conditions that are not reported will appear as "N/A" by default in the template (Global Conditionals Tags are supported). For best results, find a station that's closest to you and that reports the most conditions.
 
 
-## CURRENT CONDITIONS
+## Current Conditions
 
 Displays current weather conditions.
 
-## USAGE
+## Usage
 
     {exp:world_weather:current station="LFPG" cache_refresh="300"}
     	<h1>Weather in Paris, France</h1>
@@ -28,14 +28,15 @@ Displays current weather conditions.
     	Last Updated: {last_update format="%m/%d/%Y %g:%i %a"}<br>
     {/exp:world_weather:current}
 
-## TAG PARAMETERS
+## Tag Parameters
 
 - `station=` - [REQUIRED] - The four character station location indicator. You can find a list of station codes at the [following URL](http://weather.gov/tg/siteloc.shtml).
 - `cache_refresh=` - The number of minutes between cache refreshes. The default is 180 minutes (three hours).
 
 
-------------------
-CHANGELOG:
+## Change Log
 
-Version 2.0.1 - added `{gmt_last_update}` date variable and altered {last_update} to show localized time
-Version 2.0 - Updated plugin to be 2.0 compatible
+- Version 2.0.1 
+    - added `{gmt_last_update}` date variable and altered {last_update} to show localized time
+- Version 2.0 
+    - Updated plugin to be 2.0 compatible
