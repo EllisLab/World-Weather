@@ -13,30 +13,29 @@ Displays current weather conditions.
 
 ## Usage
 
-    {exp:world_weather:current station="LFPG" cache_refresh="300"}
-    	<h1>Weather in Paris, France</h1>
-    	Temperature: {temperature_f}&deg;F ({temperature_c}&deg;C)<br />
-    	Feels Like: {feels_like_f}&deg;F ({feels_like_c}&deg;C)<br />
-    	Heat Index: {heat_index_f}&deg;F ({heat_index_c}&deg;C)<br />
-    	Dew Point: {dew_point_f}&deg;F ({dew_point_c}&deg;C)<br />
-    	Humidity: {humidity}%<br />
-    	Barometer: {barometer_in} in. Hg ({barometer_hpa} hPa)<br />
-    	Sky Conditions: {sky_condition}<br />
-    	Conditions: {condition}<br />
-    	Wind: from the {wind_direction} at {wind_speed_mph} mph<br>
-    	Visibility: {visibility_mi} mi ({visibility_km} km)<br>
-    	Last Updated: {last_update format="%m/%d/%Y %g:%i %a"}<br>
-    {/exp:world_weather:current}
+	{exp:world_weather:current station="LFPG" cache_refresh="300"}
+		<h1>Weather in Paris, France</h1>
+		Temperature: {temperature_f}&deg;F ({temperature_c}&deg;C)<br />
+		Feels Like: {feels_like_f}&deg;F ({feels_like_c}&deg;C)<br />
+		Heat Index: {heat_index_f}&deg;F ({heat_index_c}&deg;C)<br />
+		Dew Point: {dew_point_f}&deg;F ({dew_point_c}&deg;C)<br />
+		Humidity: {humidity}%<br />
+		Barometer: {barometer_in} in. Hg ({barometer_hpa} hPa)<br />
+		Sky Conditions: {sky_condition}<br />
+		Conditions: {condition}<br />
+		Wind: from the {wind_direction} at {wind_speed_mph} mph<br>
+		Visibility: {visibility_mi} mi ({visibility_km} km)<br>
+		Last Updated: {last_update format="%m/%d/%Y %g:%i %a"}<br>
+	{/exp:world_weather:current}
 
 ## Tag Parameters
 
 - `station=` - [REQUIRED] - The four character station location indicator. You can find a list of station codes at the [following URL](http://weather.gov/tg/siteloc.shtml).
 - `cache_refresh=` - The number of minutes between cache refreshes. The default is 180 minutes (three hours).
 
-
 ## Change Log
 
-- Version 2.0.1 
-    - added `{gmt_last_update}` date variable and altered {last_update} to show localized time
-- Version 2.0 
-    - Updated plugin to be 2.0 compatible
+- 2.0.1
+	- added `{gmt_last_update}` date variable and altered {last_update} to show localized time
+- 2.0
+	- Updated plugin to be 2.0 compatible
