@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /*
-Copyright (C) 2004 - 2011 EllisLab, Inc.
+Copyright (C) 2004 - 2015 EllisLab, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,46 +25,36 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from EllisLab, Inc.
 */
 
-$plugin_info = array(
-                        'pi_name'        => 'World Weather',
-                        'pi_version'     => '2.0.2',
-                        'pi_author'      => 'Donnie Adams',
-                        'pi_author_url'  => 'http://http://expressionengine.com/downloads/',
-                        'pi_description' => 'Displays weather conditions on your site',
-                        'pi_usage'       => World_weather::usage()
-                    );
 
 /**
  * World_weather Class
  *
  * @package			ExpressionEngine
  * @category		Plugin
- * @author			ExpressionEngine Dev Team
- * @copyright		Copyright (c) 2004 - 2011, EllisLab, Inc.
- * @link			http://expressionengine.com/downloads/details/world_weather/
+ * @author          EllisLab
+ * @copyright       Copyright (c) 2004 - 2015, EllisLab, Inc.
+ * @link			https://github.com/EllisLab/World-Weather
  */
-
 class World_weather
 {
-    var $icao           = '';// station id
-    var $weather_data  = '';
-	var $return_data    = '';
+    public $icao           = '';// station id
+    public $weather_data  = '';
+	public $return_data    = '';
 
-    var $cache_dir      = 'world_weather_cache';
-    var $cache_path     = '';
-    var $cache_tpath    = '';
-    var $cache_refresh  = 180;// minutes
-    var $cache_data     = '';
-    var $cache_time     = '';
+    public $cache_dir      = 'world_weather_cache';
+    public $cache_path     = '';
+    public $cache_tpath    = '';
+    public $cache_refresh  = 180;// minutes
+    public $cache_data     = '';
+    public $cache_time     = '';
 
 	/**
 	 * Constructor
 	 *
 	 */
-    function World_weather()
+    function __construct()
     {
-		$this->EE =& get_instance();
-        $this->EE->lang->loadfile('world_weather');
+        ee()->lang->loadfile('world_weather');
 
         $this->cache_dir = APPPATH.'cache/'.$this->cache_dir.'/';
     }
@@ -81,12 +71,11 @@ class World_weather
 	*/
     function current()
     {
-
         /*---------------------------------------
          Validate ICAO
         -----------------------------------------*/
 
-        if ( ! $this->valid_icao($this->EE->TMPL->fetch_param('station')))
+        if ( ! $this->valid_icao(ee()->TMPL->fetch_param('station')))
         {
             return;
         }
@@ -95,14 +84,14 @@ class World_weather
          Fetch Tag Parameters
         -----------------------------------------*/
 
-        $this->icao          = $this->EE->TMPL->fetch_param('station');
-        $this->cache_refresh = ( ! is_numeric($this->EE->TMPL->fetch_param('cache_refresh'))) ? $this->cache_refresh 
-                                                                                    : $this->EE->TMPL->fetch_param('cache_refresh');
+        $this->icao          = ee()->TMPL->fetch_param('station');
+        $this->cache_refresh = ( ! is_numeric(ee()->TMPL->fetch_param('cache_refresh'))) ? $this->cache_refresh
+                                                                                    : ee()->TMPL->fetch_param('cache_refresh');
 
         /*---------------------------------------
          Check Cache and Fetch Cache
         -----------------------------------------*/
-        //  
+        //
         $this->cache_path  = $this->cache_dir.md5('current'.$this->icao);
         $this->cache_tpath = $this->cache_path.'_t';
 
@@ -118,7 +107,7 @@ class World_weather
                 return;
             }
         }
-        
+
         if (stristr($this->cache_data, 'Not Found'))
         {
         	return;
@@ -141,7 +130,7 @@ class World_weather
 
         $tags = $this->weather_data;
 
-        $NA =  $this->EE->lang->line('not_applicable');
+        $NA =  lang('not_applicable');
 
         $tags['wind_direction'] = ( ! isset($tags['wind_direction'])) ? $NA : $tags['wind_direction'];
         $tags['wind_degrees']   = ( ! isset($tags['wind_degrees']))   ? $NA : $tags['wind_degrees'];
@@ -161,11 +150,11 @@ class World_weather
         $tags['heat_index_f']   = ( ! isset($tags['heat_index_f']))   ? $NA : $tags['heat_index_f'];
         $tags['heat_index_c']   = ( ! isset($tags['heat_index_c']))   ? $NA : $tags['heat_index_c'];
         $tags['barometer_in']   = ( ! isset($tags['barometer_in']))   ? $NA : $tags['barometer_in'];
-        $tags['barometer_hpa']  = ( ! isset($tags['barometer_hpa']))  ? $NA : $tags['barometer_hpa'];        
+        $tags['barometer_hpa']  = ( ! isset($tags['barometer_hpa']))  ? $NA : $tags['barometer_hpa'];
         $tags['sky_condition']  = ( ! isset($tags['sky_condition']))  ? $NA : $tags['sky_condition'];
         $tags['visibility_mi']  = ( ! isset($tags['visibility_mi']))  ? $NA : $tags['visibility_mi'];
         $tags['visibility_km']  = ( ! isset($tags['visibility_km']))  ? $NA : $tags['visibility_km'];
-        $tags['condition']      = ( ! isset($tags['condition']))      ? $this->EE->lang->line('clear') : $tags['condition'];
+        $tags['condition']      = ( ! isset($tags['condition']))      ? lang('clear') : $tags['condition'];
         $tags['last_update']    = ( ! isset($tags['last_update']))   ? $this->get_filemtime() : $tags['last_update'];
 
 
@@ -173,13 +162,13 @@ class World_weather
          Parse the Template
         ----------------------------------------*/
 
-        $tagdata = $this->EE->TMPL->tagdata;
+        $tagdata = ee()->TMPL->tagdata;
 
         /*----------------------------------------
          Parse scripted conditionals
         ----------------------------------------*/
 
-        foreach ($this->EE->TMPL->var_cond as $val)
+        foreach (ee()->TMPL->var_cond as $val)
         {
             $cond = $this->functions->prep_conditional($val['0']);
 
@@ -210,12 +199,12 @@ class World_weather
          Parse single variables
         ----------------------------------------*/
 
-        foreach ($this->EE->TMPL->var_single as $key => $val)
+        foreach (ee()->TMPL->var_single as $key => $val)
         {
             /*
             if ($key == 'metar')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['metar'],
                                                     $tagdata
@@ -225,9 +214,9 @@ class World_weather
 
 			if (strpos($key, 'gmt_last_update') !== FALSE)
             {
-				$tagdata = $this->EE->TMPL->swap_var_single(
+				$tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
-                                                    $this->EE->localize->format_date($val, $tags['last_update'], FALSE),
+                                                    ee()->localize->format_date($val, $tags['last_update'], FALSE),
                                                     $tagdata
                                                     );
             }
@@ -235,16 +224,16 @@ class World_weather
 
 			if (strpos($key,'last_update') !== FALSE)
             {
-				$tagdata = $this->EE->TMPL->swap_var_single(
+				$tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
-                                                    $this->EE->localize->format_date($val, $tags['last_update']),
+                                                    ee()->localize->format_date($val, $tags['last_update']),
                                                     $tagdata
                                                     );
             }
 
             if ($key == 'wind_direction')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['wind_direction'],
                                                     $tagdata
@@ -253,7 +242,7 @@ class World_weather
 
             if ($key == 'wind_degrees')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['wind_degrees'],
                                                     $tagdata
@@ -262,7 +251,7 @@ class World_weather
 
             if ($key == 'wind_speed_mph')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['wind_speed_mph'],
                                                     $tagdata
@@ -271,7 +260,7 @@ class World_weather
 
             if ($key == 'wind_speed_kmh')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['wind_speed_kmh'],
                                                     $tagdata
@@ -280,7 +269,7 @@ class World_weather
 
             if ($key == 'wind_speed_kt')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['wind_speed_kt'],
                                                     $tagdata
@@ -289,7 +278,7 @@ class World_weather
 
             if ($key == 'wind_gust_mph')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['wind_gust_mph'],
                                                     $tagdata
@@ -298,7 +287,7 @@ class World_weather
 
             if ($key == 'wind_gust_kmh')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['wind_gust_kmh'],
                                                     $tagdata
@@ -307,7 +296,7 @@ class World_weather
 
             if ($key == 'wind_gust_kt')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['wind_gust_kt'],
                                                     $tagdata
@@ -316,7 +305,7 @@ class World_weather
 
             if ($key == 'temperature_f')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['temperature_f'],
                                                     $tagdata
@@ -325,7 +314,7 @@ class World_weather
 
             if ($key == 'temperature_c')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['temperature_c'],
                                                     $tagdata
@@ -334,7 +323,7 @@ class World_weather
 
             if ($key == 'feels_like_f')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['feels_like_f'],
                                                     $tagdata
@@ -343,7 +332,7 @@ class World_weather
 
             if ($key == 'feels_like_c')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['feels_like_c'],
                                                     $tagdata
@@ -352,7 +341,7 @@ class World_weather
 
             if ($key == 'dew_point_f')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['dew_point_f'],
                                                     $tagdata
@@ -361,7 +350,7 @@ class World_weather
 
             if ($key == 'dew_point_c')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['dew_point_c'],
                                                     $tagdata
@@ -370,7 +359,7 @@ class World_weather
 
             if ($key == 'humidity')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['humidity'],
                                                     $tagdata
@@ -379,7 +368,7 @@ class World_weather
 
             if ($key == 'heat_index_f')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['heat_index_f'],
                                                     $tagdata
@@ -388,7 +377,7 @@ class World_weather
 
             if ($key == 'heat_index_c')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['heat_index_c'],
                                                     $tagdata
@@ -397,7 +386,7 @@ class World_weather
 
             if ($key == 'barometer_in')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['barometer_in'],
                                                     $tagdata
@@ -406,7 +395,7 @@ class World_weather
 
             if ($key == 'barometer_hpa')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['barometer_hpa'],
                                                     $tagdata
@@ -415,7 +404,7 @@ class World_weather
 
             if ($key == 'condition')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['condition'],
                                                     $tagdata
@@ -424,7 +413,7 @@ class World_weather
 
             if ($key == 'visibility_mi')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['visibility_mi'],
                                                     $tagdata
@@ -433,7 +422,7 @@ class World_weather
 
             if ($key == 'visibility_km')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['visibility_km'],
                                                     $tagdata
@@ -442,7 +431,7 @@ class World_weather
 
             if ($key == 'sky_condition')
             {
-                $tagdata = $this->EE->TMPL->swap_var_single(
+                $tagdata = ee()->TMPL->swap_var_single(
                                                     $key,
                                                     $tags['sky_condition'],
                                                     $tagdata
@@ -453,7 +442,6 @@ class World_weather
         //END single variables
 
         return $tagdata;;
-
     }
 
 	// --------------------------------------------------------------------
@@ -518,7 +506,7 @@ class World_weather
                 $getting_headers = false;
             }
         }
-        
+
         fclose($fp);
 
         if (trim($this->cache_data) == '')
@@ -538,7 +526,7 @@ class World_weather
 	*
 	* @access   public
 	* @return   boolean
-	*/    
+	*/
     function write_cache()
     {
         if ( ! @is_dir($this->cache_dir))
@@ -629,7 +617,7 @@ class World_weather
         {
             if ($mtime = @filemtime($this->cache_path))
             {
-				//return $mtime;	
+				//return $mtime;
 
 				$time = gmmktime(
                                 gmdate("H", $mtime),
@@ -684,7 +672,7 @@ class World_weather
 
         // remove extra white space
         $raw_metar = trim(preg_replace('/([\r\n])*[\s]+/', ' ', $this->cache_data));
-        
+
         $weather = array();
 
         // get date: 2004/08/08 23:00
@@ -693,7 +681,7 @@ class World_weather
             $weather['last_update'] = gmmktime(
                                             $date[4], // hour
                                             $date[5], // min
-                                            0,        // 
+                                            0,        //
                                             $date[2], // month
                                             $date[3], // day
                                             $date[1]  // year
@@ -721,15 +709,15 @@ class World_weather
                                 // Calm Winds
                                 case '0000':
                                 case '00000':
-                                    $weather['wind_direction'] = $this->EE->lang->line('calm');
-                                    $weather['wind_degrees']   = $this->EE->lang->line('calm');
+                                    $weather['wind_direction'] = lang('calm');
+                                    $weather['wind_degrees']   = lang('calm');
                                     break;
 
                                 // Variable Winds
                                 case 'VAR':
                                 case 'VRB':
-                                    $weather['wind_direction'] = $this->EE->lang->line('variable');
-                                    $weather['wind_degrees']   = $this->EE->lang->line('variable');
+                                    $weather['wind_direction'] = lang('variable');
+                                    $weather['wind_degrees']   = lang('variable');
                                     break;
 
                                 // Default
@@ -771,14 +759,14 @@ class World_weather
                                 {
                                     // specail low
                                     case '0000':
-                                        $prefix = $this->EE->lang->line('less_than');
+                                        $prefix = lang('less_than');
                                         $weather['visibility_km']  = $prefix . ' ' . 0.05;
                                         $weather['visibility_mi']  = $prefix . ' ' . 0.031;
                                         break;
 
                                     // specail high
                                     case '9999':
-                                        $prefix = $this->EE->lang->line('greater_than');
+                                        $prefix = lang('greater_than');
                                         $weather['visibility_km']  = $prefix . ' ' . 10;
                                         $weather['visibility_mi']  = $prefix . ' ' . 6.2;
                                         break;
@@ -793,7 +781,7 @@ class World_weather
                             // Visibility in Miles
                             elseif (count($parts) == 10)
                             {
-                                $prefix = ($parts[0]{0} != 'M') ? '' : $this->EE->lang->line('less_than');
+                                $prefix = ($parts[0]{0} != 'M') ? '' : lang('less_than');
 
                                 // whole number and fraction
                                 if ($parts[7] == '/')
@@ -829,7 +817,7 @@ class World_weather
                             // CAVOK
                             elseif ($parts[10] == 'CAVOK')
                             {
-                                $prefix = $this->EE->lang->line('greater_than');
+                                $prefix = lang('greater_than');
                                 $weather['visibility_km']  = $prefix . ' ' . 10;
                                 $weather['visibility_mi']  = $prefix . ' ' . 6.2;
 
@@ -837,7 +825,7 @@ class World_weather
                                 $weather['sky_condition'] = $this->translate_clouds('SKC');
 
                                 // condition
-                                $weather['condition'] = $this->EE->lang->line('clear');
+                                $weather['condition'] = lang('clear');
                             }
                             unset($whole_mile);
                             break;
@@ -849,18 +837,18 @@ class World_weather
 
                             for ($j = 1; $j <= count($parts); $j++)
                             {
-                                $weather['condition'] .= (empty($parts[$j])) ? '' : $this->EE->lang->line($parts[$j]);
-                            
+                                $weather['condition'] .= (empty($parts[$j])) ? '' : lang($parts[$j]);
+
                             }
 
                             $weather['condition'] = trim($weather['condition']);
                             break;
 
-                        // Clouds  
+                        // Clouds
                         case 'clouds':
                             /*-----------------------------
-                              May appear more than once in the metar. 
-                              Since we only want the last occurrence, 
+                              May appear more than once in the metar.
+                              Since we only want the last occurrence,
                               we simply let each over write the other.
 
                               May add further coding to this group in the future,
@@ -988,44 +976,44 @@ class World_weather
         {
             case 'SKC':
             case 'NSC':
-                $translation = $this->EE->lang->line('clear_skies');
+                $translation = lang('clear_skies');
                 break;
 
             case 'CLR':
-                $translation = $this->EE->lang->line('clear_below_twelve_thousand_feet');
+                $translation = lang('clear_below_twelve_thousand_feet');
                 break;
 
             case 'FEW':
-                $translation = $this->EE->lang->line('scattered_clouds');
+                $translation = lang('scattered_clouds');
                 break;
 
             case 'SCT':
             case 'SKT':
-                $translation = $this->EE->lang->line('partly_cloudy');
+                $translation = lang('partly_cloudy');
                 break;
 
             case 'BKN':
-                $translation = $this->EE->lang->line('mostly_cloudy');
+                $translation = lang('mostly_cloudy');
                 break;
 
             case 'OVC':
-                $translation = $this->EE->lang->line('overcast');
+                $translation = lang('overcast');
                 break;
 
             case 'VV':
-                $translation = $this->EE->lang->line('obscured');
+                $translation = lang('obscured');
                 break;
 
             case 'CB':
-                $translation = $this->EE->lang->line('cumulonimbus');
+                $translation = lang('cumulonimbus');
                 break;
 
             case 'TCU':
-                $translation = $this->EE->lang->line('towering_cumulus');
+                $translation = lang('towering_cumulus');
                 break;
 
             default:
-                $translation = $this->EE->lang->line('unknown');
+                $translation = lang('unknown');
                 break;
         }
         return ($translation);
@@ -1046,22 +1034,22 @@ class World_weather
     function degrees2compass($direction)
     {
         $compass = array(
-                            $this->EE->lang->line('north'),
-                            $this->EE->lang->line('north_north_east'),
-                            $this->EE->lang->line('north_east'),
-                            $this->EE->lang->line('east_north_east'),
-                            $this->EE->lang->line('east'),
-                            $this->EE->lang->line('east_south_east'),
-                            $this->EE->lang->line('south_east'),
-                            $this->EE->lang->line('south_south_east'),
-                            $this->EE->lang->line('south'),
-                            $this->EE->lang->line('south_south_west'),
-                            $this->EE->lang->line('south_west'),
-                            $this->EE->lang->line('west_south_west'),
-                            $this->EE->lang->line('west'),
-                            $this->EE->lang->line('west_north_west'),
-                            $this->EE->lang->line('north_west'),
-                            $this->EE->lang->line('north_north_west'),
+                            lang('north'),
+                            lang('north_north_east'),
+                            lang('north_east'),
+                            lang('east_north_east'),
+                            lang('east'),
+                            lang('east_south_east'),
+                            lang('south_east'),
+                            lang('south_south_east'),
+                            lang('south'),
+                            lang('south_south_west'),
+                            lang('south_west'),
+                            lang('west_south_west'),
+                            lang('west'),
+                            lang('west_north_west'),
+                            lang('north_west'),
+                            lang('north_north_west'),
                         );
 
         return $compass[ round($direction / 22.5) % 16 ];
@@ -1077,9 +1065,9 @@ class World_weather
 	*
 	* @access   public
 	* @param    string
-	* @param    string 
-	* @param    string 
-	* @param    string 
+	* @param    string
+	* @param    string
+	* @param    string
 	* @return   number
 	*/
     function convert_temperature($temperature, $from, $to, $precision = 0)
@@ -1109,9 +1097,9 @@ class World_weather
 	*
 	* @access   public
 	* @param    string
-	* @param    string 
-	* @param    string  
-	* @param    number 
+	* @param    string
+	* @param    string
+	* @param    number
 	* @return   number
 	*/
     function convert_speed($speed, $from, $to, $precision = 0)
@@ -1156,8 +1144,8 @@ class World_weather
 	* @access   public
 	* @param    string
 	* @param    string
-	* @param    string  
-	* @param    number  
+	* @param    string
+	* @param    number
 	* @return   number
 	*/
     function convert_pressure($pressure, $from, $to, $precision = 0)
@@ -1202,8 +1190,8 @@ class World_weather
 	* @access   public
 	* @param    string
 	* @param    string
-	* @param    string  
-	* @param    number  
+	* @param    string
+	* @param    number
 	* @return   number
 	*/
     function convert_distance($distance, $from, $to, $precision = 0)
@@ -1244,8 +1232,8 @@ class World_weather
 	*
 	* @access   public
 	* @param    string
-	* @param    string  
-	* @param    number  
+	* @param    string
+	* @param    number
 	* @return   number
 	*/
     function calc_wind_chill($temperature_f, $speed_mph, $precision = 0)
@@ -1263,8 +1251,8 @@ class World_weather
 	*
 	* @access   public
 	* @param    string
-	* @param    string  
-	* @param    number  
+	* @param    string
+	* @param    number
 	* @return   number
 	*/
     function calc_humidity($temperature_c, $dew_point_c, $precision = 0)
@@ -1285,8 +1273,8 @@ class World_weather
 	*
 	* @access   public
 	* @param    string
-	* @param    string  
-	* @param    number  
+	* @param    string
+	* @param    number
 	* @return   array
 	*/
     function calc_heat_index($temperature_f, $humidity, $precision = 0)
@@ -1305,93 +1293,4 @@ class World_weather
 	}
 
 	// --------------------------------------------------------------------
-	
-	/**
-	 * Usage
-	 *
-	 * Plugin Usage
-	 *
-	 * @access	public
-	 * @return	string
-	 */
-
-	function usage()
-	{
-		ob_start(); 
-		?>
-
-		World Weather is a plugin for ExpressionEngine that allows you to displays weather conditions from around the world on your site. The plugin fetches weather information generated by a nationwide network of weather reporting station that are usually located at airports. These stations generally report weather conditions every three to six hours and the information that is reported (or not reported) can vary from station to station.
-
-		Every station has a four character station location indicator code (ICAO) that is required in order to fetch weather conditions for that particular location. You can find a list of ICAO codes at the following URL. 
-
-		http://weather.gov/tg/siteloc.shtml
-
-		NOTE:  The weather data that is returned by a station depends on the observation software located at that particular station. Weather conditions that are not reported will appear as "N/A" by default in the template (Global Conditionals Tags are supported). For best results, find a  station that's closest to you and that reports the most conditions.
-
-
-		=============================
-		CURRENT CONDITIONS
-		=============================
-
-		Displays current weather conditions.
-
-		==============
-		USAGE
-		==============
-
-
-		{exp:world_weather:current station="LFPG" cache_refresh="300"}
-		<h1>Weather in Paris, France</h1>
-		Temperature: {temperature_f}&deg;F ({temperature_c}&deg;C)<br />
-		Feels Like: {feels_like_f}&deg;F ({feels_like_c}&deg;C)<br />
-		Heat Index: {heat_index_f}&deg;F ({heat_index_c}&deg;C)<br />
-		Dew Point: {dew_point_f}&deg;F ({dew_point_c}&deg;C)<br />
-		Humidity: {humidity}%<br />
-		Barometer: {barometer_in} in. Hg ({barometer_hpa} hPa)<br />
-		Sky Conditions: {sky_condition}<br />
-		Conditions: {condition}<br />
-		Wind: from the {wind_direction} at {wind_speed_mph} mph<br>
-		Visibility: {visibility_mi} mi ({visibility_km} km)<br>
-		Last Updated: {last_update format="%m/%d/%Y %g:%i %a"}<br>
-		{/exp:world_weather:current}
-
-		==============
-		TAG PARAMETERS
-		==============
-
-		station=
-			[REQUIRED]
-			The four character station location indicator.
-
-			You can find a list of station codes at the following URL.
-			http://weather.gov/tg/siteloc.shtml
-		-------------------
-
-		cache_refresh=
-			The number of minutes between cache refreshes.
-			The default is 180 minutes (three hours).
-		-------------------
-
-		------------------
-		CHANGELOG:
-		------------------
-		Version 2.0.1 - added {gmt_last_update} date variable and altered {last_update} to show localized time
-		Version 2.0 - Updated plugin to be 2.0 compatible
-
-
-
-		<?php
-		$buffer = ob_get_contents();
-
-		ob_end_clean(); 
-
-		return $buffer;
-	}
-
-	// --------------------------------------------------------------------
-
 }
-// END CLASS
-
-/* End of file pi.world_weather.php */
-/* Location: ./system/expressionengine/third_party/world_weather/pi.world_weather.php */
