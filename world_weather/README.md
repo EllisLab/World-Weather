@@ -27,7 +27,7 @@ Every station has a four character station location indicator code (ICAO) that i
 	Visibility: {visibility_mi} mi ({visibility_km} km)<br>
 	Last Updated: {last_update format="%m/%d/%Y %g:%i %a"}<br>
 {/exp:world_weather:current}
-```	
+```
 
 #### Parameters
 
@@ -62,6 +62,10 @@ Every station has a four character station location indicator code (ICAO) that i
 - `{last_update}`
 
 ## Change Log
+
+### 3.0.1
+
+- Updated for new NOAA file location.
 
 ### 3.0
 
