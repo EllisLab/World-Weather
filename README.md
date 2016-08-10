@@ -35,6 +35,8 @@ Displays current weather conditions.
 
 ## Change Log
 
+- 2.0.2
+	- Updated for new NOAA file location.
 - 2.0.1
 	- added `{gmt_last_update}` date variable and altered {last_update} to show localized time
 - 2.0

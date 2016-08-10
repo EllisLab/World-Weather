@@ -96,13 +96,13 @@ class World_weather
         -----------------------------------------*/
 
         $this->icao          = $this->EE->TMPL->fetch_param('station');
-        $this->cache_refresh = ( ! is_numeric($this->EE->TMPL->fetch_param('cache_refresh'))) ? $this->cache_refresh 
+        $this->cache_refresh = ( ! is_numeric($this->EE->TMPL->fetch_param('cache_refresh'))) ? $this->cache_refresh
                                                                                     : $this->EE->TMPL->fetch_param('cache_refresh');
 
         /*---------------------------------------
          Check Cache and Fetch Cache
         -----------------------------------------*/
-        //  
+        //
         $this->cache_path  = $this->cache_dir.md5('current'.$this->icao);
         $this->cache_tpath = $this->cache_path.'_t';
 
@@ -110,15 +110,15 @@ class World_weather
 
         if (trim($this->cache_data) == '')
         {
-            $host = 'weather.noaa.gov';
-            $path = '/pub/data/observations/metar/stations/'.$this->icao.'.TXT';
+            $host = 'tgftp.nws.noaa.gov';
+            $path = '/data/observations/metar/stations/'.$this->icao.'.TXT';
 
             if ($this->retrieve_data_socket($host, $path) == false)
             {
                 return;
             }
         }
-        
+
         if (stristr($this->cache_data, 'Not Found'))
         {
         	return;
@@ -161,7 +161,7 @@ class World_weather
         $tags['heat_index_f']   = ( ! isset($tags['heat_index_f']))   ? $NA : $tags['heat_index_f'];
         $tags['heat_index_c']   = ( ! isset($tags['heat_index_c']))   ? $NA : $tags['heat_index_c'];
         $tags['barometer_in']   = ( ! isset($tags['barometer_in']))   ? $NA : $tags['barometer_in'];
-        $tags['barometer_hpa']  = ( ! isset($tags['barometer_hpa']))  ? $NA : $tags['barometer_hpa'];        
+        $tags['barometer_hpa']  = ( ! isset($tags['barometer_hpa']))  ? $NA : $tags['barometer_hpa'];
         $tags['sky_condition']  = ( ! isset($tags['sky_condition']))  ? $NA : $tags['sky_condition'];
         $tags['visibility_mi']  = ( ! isset($tags['visibility_mi']))  ? $NA : $tags['visibility_mi'];
         $tags['visibility_km']  = ( ! isset($tags['visibility_km']))  ? $NA : $tags['visibility_km'];
@@ -518,7 +518,7 @@ class World_weather
                 $getting_headers = false;
             }
         }
-        
+
         fclose($fp);
 
         if (trim($this->cache_data) == '')
@@ -538,7 +538,7 @@ class World_weather
 	*
 	* @access   public
 	* @return   boolean
-	*/    
+	*/
     function write_cache()
     {
         if ( ! @is_dir($this->cache_dir))
@@ -629,7 +629,7 @@ class World_weather
         {
             if ($mtime = @filemtime($this->cache_path))
             {
-				//return $mtime;	
+				//return $mtime;
 
 				$time = gmmktime(
                                 gmdate("H", $mtime),
@@ -684,7 +684,7 @@ class World_weather
 
         // remove extra white space
         $raw_metar = trim(preg_replace('/([\r\n])*[\s]+/', ' ', $this->cache_data));
-        
+
         $weather = array();
 
         // get date: 2004/08/08 23:00
@@ -693,7 +693,7 @@ class World_weather
             $weather['last_update'] = gmmktime(
                                             $date[4], // hour
                                             $date[5], // min
-                                            0,        // 
+                                            0,        //
                                             $date[2], // month
                                             $date[3], // day
                                             $date[1]  // year
@@ -850,17 +850,17 @@ class World_weather
                             for ($j = 1; $j <= count($parts); $j++)
                             {
                                 $weather['condition'] .= (empty($parts[$j])) ? '' : $this->EE->lang->line($parts[$j]);
-                            
+
                             }
 
                             $weather['condition'] = trim($weather['condition']);
                             break;
 
-                        // Clouds  
+                        // Clouds
                         case 'clouds':
                             /*-----------------------------
-                              May appear more than once in the metar. 
-                              Since we only want the last occurrence, 
+                              May appear more than once in the metar.
+                              Since we only want the last occurrence,
                               we simply let each over write the other.
 
                               May add further coding to this group in the future,
@@ -1077,9 +1077,9 @@ class World_weather
 	*
 	* @access   public
 	* @param    string
-	* @param    string 
-	* @param    string 
-	* @param    string 
+	* @param    string
+	* @param    string
+	* @param    string
 	* @return   number
 	*/
     function convert_temperature($temperature, $from, $to, $precision = 0)
@@ -1109,9 +1109,9 @@ class World_weather
 	*
 	* @access   public
 	* @param    string
-	* @param    string 
-	* @param    string  
-	* @param    number 
+	* @param    string
+	* @param    string
+	* @param    number
 	* @return   number
 	*/
     function convert_speed($speed, $from, $to, $precision = 0)
@@ -1156,8 +1156,8 @@ class World_weather
 	* @access   public
 	* @param    string
 	* @param    string
-	* @param    string  
-	* @param    number  
+	* @param    string
+	* @param    number
 	* @return   number
 	*/
     function convert_pressure($pressure, $from, $to, $precision = 0)
@@ -1202,8 +1202,8 @@ class World_weather
 	* @access   public
 	* @param    string
 	* @param    string
-	* @param    string  
-	* @param    number  
+	* @param    string
+	* @param    number
 	* @return   number
 	*/
     function convert_distance($distance, $from, $to, $precision = 0)
@@ -1244,8 +1244,8 @@ class World_weather
 	*
 	* @access   public
 	* @param    string
-	* @param    string  
-	* @param    number  
+	* @param    string
+	* @param    number
 	* @return   number
 	*/
     function calc_wind_chill($temperature_f, $speed_mph, $precision = 0)
@@ -1263,8 +1263,8 @@ class World_weather
 	*
 	* @access   public
 	* @param    string
-	* @param    string  
-	* @param    number  
+	* @param    string
+	* @param    number
 	* @return   number
 	*/
     function calc_humidity($temperature_c, $dew_point_c, $precision = 0)
@@ -1285,8 +1285,8 @@ class World_weather
 	*
 	* @access   public
 	* @param    string
-	* @param    string  
-	* @param    number  
+	* @param    string
+	* @param    number
 	* @return   array
 	*/
     function calc_heat_index($temperature_f, $humidity, $precision = 0)
@@ -1305,7 +1305,7 @@ class World_weather
 	}
 
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Usage
 	 *
@@ -1317,12 +1317,12 @@ class World_weather
 
 	function usage()
 	{
-		ob_start(); 
+		ob_start();
 		?>
 
 		World Weather is a plugin for ExpressionEngine that allows you to displays weather conditions from around the world on your site. The plugin fetches weather information generated by a nationwide network of weather reporting station that are usually located at airports. These stations generally report weather conditions every three to six hours and the information that is reported (or not reported) can vary from station to station.
 
-		Every station has a four character station location indicator code (ICAO) that is required in order to fetch weather conditions for that particular location. You can find a list of ICAO codes at the following URL. 
+		Every station has a four character station location indicator code (ICAO) that is required in order to fetch weather conditions for that particular location. You can find a list of ICAO codes at the following URL.
 
 		http://weather.gov/tg/siteloc.shtml
 
@@ -1383,7 +1383,7 @@ class World_weather
 		<?php
 		$buffer = ob_get_contents();
 
-		ob_end_clean(); 
+		ob_end_clean();
 
 		return $buffer;
 	}
