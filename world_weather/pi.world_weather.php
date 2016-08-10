@@ -99,8 +99,8 @@ class World_weather
 
         if (trim($this->cache_data) == '')
         {
-            $host = 'weather.noaa.gov';
-            $path = '/pub/data/observations/metar/stations/'.$this->icao.'.TXT';
+            $host = 'tgftp.nws.noaa.gov';
+            $path = '/data/observations/metar/stations/'.$this->icao.'.TXT';
 
             if ($this->retrieve_data_socket($host, $path) == false)
             {
