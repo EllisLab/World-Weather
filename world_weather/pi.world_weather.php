@@ -475,7 +475,7 @@ class World_weather
 	*/
     function retrieve_data_socket($host, $path, $timeout = 30)
     {
-        $fp = @fsockopen($host, 80, $errno, $errstr, $timeout);
+        $fp = fsockopen("ssl://".$host, 443, $errno, $errstr, $timeout);
 
         if ( ! is_resource($fp))
         {
