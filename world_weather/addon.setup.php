@@ -1,11 +1,11 @@
 <?php
 
 return array(
-	'author'      => 'EllisLab',
-	'author_url'  => 'https://ellislab.com/',
+	'author'      => 'Packet Tide',
+	'author_url'  => 'https://packettide.com/',
 	'name'        => 'World Weather',
 	'description' => 'Displays weather conditions on your site',
-	'version'     => '3.0.2',
+	'version'     => '3.0.3',
 	'namespace'   => 'User\Addons\WorldWeather',
 	'settings_exist' => FALSE
 );

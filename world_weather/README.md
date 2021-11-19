@@ -63,6 +63,11 @@ Every station has a four character station location indicator code (ICAO) that i
 
 ## Change Log
 
+### 3.0.3
+
+- Updated license information
+- Added add-on icon
+
 ### 3.0.1
 
 - Updated for new NOAA file location.
